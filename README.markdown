@@ -7,6 +7,8 @@ Have a look at the following example.
 
 ```php
 <?php
+require_once("path/to/ButterOptions.php");
+
 // to simply use class names w/o namespace
 use ButterOptions\SettingsPage,
   ButterOptions\SimpleSection,
