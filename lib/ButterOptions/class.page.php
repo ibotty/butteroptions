@@ -44,20 +44,13 @@ class SettingsPage extends Page {
   protected $page_slug;
   protected $latest_section;
 
-  function __construct($options, $title, $parent_page='options-general.php') {
+  function __construct($options, $menu_title, $title=false, $parent_page='options-general.php') {
     $this->options = $options;
+    $this->menu_title = $menu_title;
     $this->title = $title;
     $this->parent_page = $parent_page;
 
-    $normalized_title = sanitize_title_with_dashes($title);
-    if (! isset(self::$slugs[$normalized_title]))
-      self::$slugs[$normalized_title] = 0;
-    else {
-      self::$slugs[$normalized_title] = 0;
-      $normalized_title.= "_".self::$slugs[$normalized_title];
-    }
-
-    $this->page_slug = $normalized_title;
+    $this->page_slug = sanitize_title_with_dashes($menu_title);
 
     add_action('admin_menu', array($this, 'add_admin_page'));
   }
@@ -117,17 +110,17 @@ class SettingsPage extends Page {
   }
 
   function add_admin_page() {
-    # default to title for menu title
-    $menu_title = $this->menu_title? $this->menu_title: $this->title;
-
-    add_submenu_page($this->parent_page, $this->title, $menu_title,
+    add_submenu_page($this->parent_page, $this->title, $this->menu_title,
       $this->capability, $this->page_slug, array($this, 'echo_page'));
   }
 
   function echo_page() {
+    # default to menu_title for title
+    $title = $this->title? $this->title: $this->menu_title;
+
     echo "<div class='wrap'>
       <div id='icon-$this->icon' class='icon32'><br /></div>
-      <h2>$this->title</h2>";
+      <h2>$title</h2>";
     echo join($this->intros, '\n');
 
     echo "<form action='options.php' method='post'>";
