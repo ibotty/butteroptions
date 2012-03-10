@@ -22,7 +22,7 @@ $validations = array(
   "option2" => "/regex to match/"
 );
 $sanitizations = array(
-  "option" => 'strtolower'
+  "option1" => 'strtolower'
 );
 $myoptions = new ButterOptions("my_options_slug", $defaults, $validations, $sanitizations);
 
