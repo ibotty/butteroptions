@@ -43,6 +43,7 @@ class SettingsPage extends Page {
   protected $intros = array();
   protected $page_slug;
   protected $latest_section;
+  protected $added_settings_fields = false;
 
   function __construct($options, $menu_title, $title=false, $parent_page='options-general.php') {
     $this->options = $options;
@@ -93,6 +94,8 @@ class SettingsPage extends Page {
   }
 
   function add_field($field, $section=null) {
+    $this->added_settings_fields = true;
+
     if (! $section) {
       if (! isset($this->latest_section))
         $this->add_section(new SimpleSession($this->title));
@@ -123,17 +126,21 @@ class SettingsPage extends Page {
       <h2>$title</h2>";
     echo join($this->intros, '\n');
 
-    echo "<form action='options.php' method='post'>";
+    // do not show a button if no settings fields were added.
+    if ($this->added_settings_fields) {
+      echo "<form action='options.php' method='post'>";
 
-    settings_fields($this->options->slug());
+      settings_fields($this->options->slug());
+    }
+
     do_settings_sections($this->page_slug);
 
-    echo "<p class='submit'>
-      <input id='submit' name='submit' type='submit' class='button-primary' value=".__("Save Changes")." />
-      </p>
-      </form>
-      </div>";
-
+    if ($this->added_settings_fields)
+      echo "<p class='submit'>
+        <input id='submit' name='submit' type='submit' class='button-primary' value=".__("Save Changes")." />
+        </p>
+        </form>";
+    echo "</div>";
   }
 }
 

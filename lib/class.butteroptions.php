@@ -92,10 +92,15 @@ class ButterOptions {
   function sanitize($options) {
     $problems = false;
 
+    if (empty($this->values))
+      $this->get_options();
+    $new_options = $this->values;
+
     foreach ($options as $option=>$value) {
       // unset options are ok
       if ($value === "") {
         Log::debug("User unset option $option");
+        unset($new_options[$option]);
         unset($options[$option]);
       } elseif (array_key_exists($option, $this->validations)) {
         $validation = $this->validations[$option];
@@ -134,7 +139,9 @@ class ButterOptions {
       if (isset($this->sanitizes[$option]))
         $value = call_user_func($this->sanitizes[$option], $value);
     }
-    return $options;
+
+    // merge new and old options hash.
+    return wp_parse_args($options, $new_options);
   }
 
   protected function get_options() {
