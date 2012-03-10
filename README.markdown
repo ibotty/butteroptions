@@ -6,6 +6,7 @@ How to use
 Have a look at the following example.
 
 ```php
+<?php
 // to simply use class names w/o namespace
 use ButterOptions\SettingsPage,
   ButterOptions\SimpleSection,
@@ -38,7 +39,6 @@ $my_option1 = $myoptions->option1;
 
 // to set an option
 $myoptions->$option2 = "take that, option";
-
 ```
 
 There are other things possible. Look into the code for now.
