@@ -48,4 +48,4 @@ There are other things possible. Look into the code for now.
 
 Dependencies
 ---------
-Wordpress (say: 3.3), PHP 5.3, ButterLog
+Wordpress (say: 3.3), PHP 5.3

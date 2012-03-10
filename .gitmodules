@@ -1,0 +1,4 @@
+[submodule "vendor/butterlog"]
+	path = vendor/butterlog
+	url = git@github.com:ibotty/butterlog.git
+

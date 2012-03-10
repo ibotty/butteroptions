@@ -24,6 +24,10 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+# require ButterLog
+if (! class_exists("ButterLog"))
+  require_once("vendor/butterlog/ButterLog.php");
+
 #
 # this is only the "autoloader" of ButterOptions for API look in lib/.
 #
@@ -35,9 +39,8 @@ $namespaces = array(
 
 foreach ($namespaces as $ns=>$classes) {
   foreach ($classes as $class) {
-    if (class_exists("$ns$class"))
-      continue;
-    require_once("lib/".join('/', explode("\\", $ns))."class.".strtolower($class).".php");
+    if (! class_exists("$ns$class"))
+      require_once("lib/".join('/', explode("\\", $ns))."class.".strtolower($class).".php");
   }
 }
 ?>
