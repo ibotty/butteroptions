@@ -26,6 +26,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace ButterOptions;
 
+use ButterLog as Log;
+
 abstract class Field {
   protected $id;
   protected $options;
@@ -51,6 +53,79 @@ abstract class Field {
   }
 }
 
+class OptionField extends Field {
+  protected $choices;
+  protected $multiple;
+
+  /**
+   * @param string $title
+   * @param string $id
+   * @param array $choices possible values as hash "desc" => "value"
+   * @param bool $allow_multiple weather to allow selecting multiple options
+   */
+  function __construct($title, $id, $choices, $allow_multiple=true) {
+    $this->choices = $choices;
+    $this->multiple = $allow_multiple;
+    parent::__construct($title, $id);
+  }
+  function echo_field($additional_args = array()){
+    if ($this->multiple)
+      echo "<select name='{$this->slug()}[]' multiple='multiple'>\n";
+    else
+      echo "<select name='{$this->slug()}' $this->multiple>\n";
+
+    $current = $this->current_value();
+    foreach ($this->choices as $label => $value) {
+      $selected = in_array($value, $current)? "selected='selected'": "";
+      echo "<option value='$value' $selected/>$label</option>\n";
+    }
+  }
+}
+class RadioButton extends RadioOrCheckbox {
+  protected $type = "radio";
+}
+class Checkbox extends RadioOrCheckbox {
+  protected $type = "checkbox";
+}
+abstract class RadioOrCheckbox extends Field {
+  protected $type;
+  protected $choices;
+  protected $displayopts;
+  /**
+   * @param string $title
+   * @param string $id
+   * @param array $choices possible values as hash "label" => "value"
+   * @param bool $allow_multiple weather to allow selecting multiple options
+   */
+  function __construct($title, $id, $choices, $displayopts=array()) {
+    $display_defaults = array('separate_str'=>"<br />", 'label_before'=>false);
+
+    $this->displayopts = wp_parse_args($display_defaults);
+    $this->choices = $choices;
+    parent::__construct($title, $id);
+  }
+
+  function echo_field($additional_args = array()) {
+    extract($this->displayopts);
+
+    $current = $this->current_value();
+    Log::debug("current value:", $current);
+    foreach ($this->choices as $label => $value) {
+      $c_id = esc_attr($label);
+      if (is_array($current))
+        $checked = in_array($value, $current)? "checked='checked'": "";
+      else
+        $checked = $current == $value? "checked='checked'": "";
+
+      if ($label_before)
+        echo "<label for='$c_id'>$label</label>";
+      echo "<input id='$c_id' type='$this->type' name='{$this->slug()}' $checked value='$value'/>";
+      if (! $label_before)
+        echo "<label for='$c_id'>$label</label>";
+      echo "$separate_str \n";
+    }
+  }
+}
 class TextField extends Field {
   function __construct($title, $id, $desc="", $placeholder="") {
     $this->placeholder = $placeholder;
