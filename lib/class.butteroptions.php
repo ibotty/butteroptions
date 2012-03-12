@@ -54,15 +54,20 @@ class ButterOptions {
 
   function __set($key, $val) {
     Log::debug("__set called with $key=> $val");
-    if (isset($fields[$key])) {
-      $this->get_options();
-
-      if ($this->values[$key] === $val)
-        return;
-
-      $this->values[$key] = $val;
-      update_option($this->serialize($this->values));
+    if (! array_key_exists($key, $this->defaults)) {
+      $trace = debug_backtrace(false);
+      trigger_error("Undefined property via __set: ".__CLASS__."::$key ".
+        "in {$trace[1]['file']} on line {$trace[1]['line']}.",
+        E_USER_NOTICE);
     }
+
+    $this->get_options();
+
+    if ($this->values[$key] === $val)
+      return;
+
+    $this->values[$key] = $val;
+    update_option($this->serialize($this->values));
   }
 
   /**
@@ -70,16 +75,16 @@ class ButterOptions {
    */
   function __get($key) {
     if (! array_key_exists($key, $this->defaults)) {
-      $trace = debug_backtrace();
+      $trace = debug_backtrace(false);
       trigger_error("Undefined property via __get: ".__CLASS__."::$key ".
-        "in {$trace[0]['file']} on line {$trace[0]['line']}.",
+        "in {$trace[1]['file']} on line {$trace[1]['line']}.",
         E_USER_NOTICE);
     }
     $this->get_options();
-    if (! isset($this->values[$key]))
-      return $this->defaults[$key];
-    else
+    if (isset($this->values[$key]))
       return $this->values[$key];
+    else
+      return $this->defaults[$key];
   }
 
   function __isset($key) {
