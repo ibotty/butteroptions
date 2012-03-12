@@ -29,9 +29,10 @@ class ButterOptions {
   /**
    * the settings slug
    */
-  protected $slug = "elasticpress-options";
+  protected $slug;
 
   function __construct($slug, $defaults=array(), $validations=array(), $sanitizes=array()) {
+    $this->slug = $slug;
     $this->defaults = $defaults;
     $this->validations = $validations;
     $this->sanitizes = $sanitizes;
