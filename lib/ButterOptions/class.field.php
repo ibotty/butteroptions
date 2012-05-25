@@ -64,7 +64,7 @@ class OptionField extends Field {
    * @param bool $allow_multiple weather to allow selecting multiple options
    */
   function __construct($title, $id, $choices, $allow_multiple=true) {
-    $this->choices = $choices;
+    $this->choices = (array) $choices;
     $this->multiple = $allow_multiple;
     parent::__construct($title, $id);
   }
@@ -74,7 +74,7 @@ class OptionField extends Field {
     else
       echo "<select name='{$this->slug()}' $this->multiple>\n";
 
-    $current = $this->current_value();
+    $current = (array) $this->current_value();
     foreach ($this->choices as $label => $value) {
       $selected = in_array($value, $current)? "selected='selected'": "";
       echo "<option value='$value' $selected/>$label</option>\n";
